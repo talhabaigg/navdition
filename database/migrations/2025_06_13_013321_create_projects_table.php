@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('title');
             $table->longText('description')->nullable();
             $table->string('type');
+            $table->string('status')->nullable()->default('open');
             $table->dateTime('due_date')->nullable();
             $table->decimal('price')->nullable();
             $table->string('attachment_link')->nullable();

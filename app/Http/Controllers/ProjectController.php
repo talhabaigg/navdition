@@ -15,7 +15,7 @@ class ProjectController extends Controller
     {
         // dd('tested');
         return Inertia::render('projects/index', [
-            'projects' => Project::with('assignee')->get()
+            'projects' => Project::with('assignee', 'creator')->get()
         ]);
     }
 
@@ -32,7 +32,18 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // Validate the request data
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'type' => 'required|string',
+            'attachment_link' => 'nullable|url',
+        ]);
+
+        Project::create($request->all());
+
+        return redirect()->route('projects.index')->with('success', 'Project created successfully.');
     }
 
     /**
@@ -64,6 +75,45 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        Project::destroy($project->id);
+
+        return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    public function claim(Project $project)
+    {
+        // Check if the project is already claimed
+        if ($project->assigned_to) {
+            return redirect()->route('projects.index')->with('error', 'Project is already claimed.');
+        }
+        // Assign the project to the authenticated user
+        $project->status = 'claimed';
+        $project->assigned_to = auth()->id();
+        $project->save();
+
+        return redirect()->back()->with('success', 'Project claimed successfully.');
+    }
+    public function release(Project $project)
+    {
+        // Check if the project is claimed by the authenticated user
+        if ($project->assigned_to !== auth()->id()) {
+            return redirect()->route('projects.index')->with('error', 'You cannot release this project.');
+        }
+        // Release the project
+        $project->status = 'open';
+        $project->assigned_to = null;
+        $project->save();
+
+        return redirect()->back()->with('success', 'Project released successfully.');
+    }
+    public function complete(Project $project)
+    {
+        if ($project->assigned_to !== auth()->id()) {
+            return redirect()->route('projects.index')->with('error', 'You cannot complete this project.');
+        }
+        // Mark the project as completed
+        $project->status = 'completed';
+        $project->save();
+        return redirect()->back()->with('success', 'Project marked as completed successfully.');
     }
 }
