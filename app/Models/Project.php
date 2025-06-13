@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 
 class Project extends Model
 {
+    use BelongsToTenant;
 
     protected $fillable = [
         'title',
@@ -16,6 +18,7 @@ class Project extends Model
         'description',
 
     ];
+
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assigned_to');
