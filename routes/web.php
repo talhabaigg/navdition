@@ -14,6 +14,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('projects', ProjectController::class);
+    Route::get('/projects/{project}/claim', [ProjectController::class, 'claim'])
+        ->name('projects.claim');
+    Route::get('/projects/{project}/release', [ProjectController::class, 'release'])
+        ->name('projects.release');
+    Route::get('/projects/{project}/complete', [ProjectController::class, 'complete'])
+        ->name('projects.complete');
 });
 
 
