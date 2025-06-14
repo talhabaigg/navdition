@@ -3,7 +3,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { CircleCheck, Clock, Folder } from 'lucide-react';
+import { BadgeAlert, CircleCheck, Clock, Folder } from 'lucide-react';
 import CreateProjectForm from './index-partials/createProjectForm';
 import { ProjectCard } from './index-partials/projectCard';
 import { Project } from './project';
@@ -14,17 +14,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface ProjectStats {
+    open: number;
+    active: number;
+    under_review: number;
+    completed: number;
+}
+
 export default function Dashboard() {
-    const { projects } = usePage<{ projects: Project[] }>().props;
+    const { projects, projectStats } = usePage<{ projects: Project[]; projectStats: ProjectStats }>().props;
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="grid auto-rows-min gap-4 p-4 md:grid-cols-3">
+            <h1 className="px-4 text-lg font-semibold">This month</h1>
+            <div className="grid auto-rows-min gap-4 p-4 md:grid-cols-4">
                 <Card className="flex justify-between p-4">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col items-start justify-between gap-2">
                             <span>Open</span>
-                            <span className="text-3xl font-medium">3</span>
+                            <span className="text-3xl font-medium">{projectStats.open}</span>
                         </div>
                         <div className="flex items-center justify-center rounded-full bg-secondary p-2 text-secondary-foreground">
                             <Folder />
@@ -35,7 +43,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col items-start justify-between gap-2">
                             <span>In-Progress</span>
-                            <span className="text-3xl font-medium">1</span>
+                            <span className="text-3xl font-medium">{projectStats.active}</span>
                         </div>
                         <div className="flex items-center justify-center rounded-full bg-secondary p-2 text-secondary-foreground">
                             <Clock />
@@ -45,8 +53,19 @@ export default function Dashboard() {
                 <Card className="flex justify-between p-4">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col items-start justify-between gap-2">
+                            <span>Under review</span>
+                            <span className="text-3xl font-medium">{projectStats.under_review}</span>
+                        </div>
+                        <div className="flex items-center justify-center rounded-full bg-secondary p-2 text-secondary-foreground">
+                            <BadgeAlert />
+                        </div>
+                    </div>
+                </Card>
+                <Card className="flex justify-between p-4">
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex flex-col items-start justify-between gap-2">
                             <span>Completed</span>
-                            <span className="text-3xl font-medium">12</span>
+                            <span className="text-3xl font-medium">{projectStats.completed}</span>
                         </div>
                         <div className="flex items-center justify-center rounded-full bg-secondary p-2 text-secondary-foreground">
                             <CircleCheck />

@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardTitle } from '@/components/ui/card';
 import { Link } from '@inertiajs/react';
-import { CalendarDays, CircleCheck, Trophy, User } from 'lucide-react';
+import { CalendarDays, CircleCheck, User } from 'lucide-react';
 import { Project } from '../project';
 import DeleteProjectDialog from './deleteProjectModal';
 
@@ -30,10 +30,6 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
                 <div className="flex items-center justify-start space-x-2">
                     <User className="h-4 w-4" />
                     <span className="text-xs">{project.creator?.name}</span>
-                </div>
-                <div className="flex items-center justify-start space-x-2">
-                    <Trophy className="h-4 w-4" />
-                    <span className="text-xs">{project.price ? `$${project.price}` : 'No price set'}</span>
                 </div>
             </CardContent>
             <CardFooter className="justify-between space-x-2 p-0">

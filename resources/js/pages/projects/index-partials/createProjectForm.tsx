@@ -14,20 +14,25 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useForm } from '@inertiajs/react';
-import { Link, Plus } from 'lucide-react';
+import { Link, LoaderCircle, Plus } from 'lucide-react';
 import React from 'react';
 const CreateProjectForm = () => {
     const [open, setOpen] = React.useState(false);
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, reset } = useForm({
         title: '',
         type: '',
         attachment_link: '',
         description: '',
+        due_date: '',
     });
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post('/projects');
-        setOpen(false);
+        post('/projects', {
+            onSuccess: () => {
+                setOpen(false); // Close the dialog only if the response was successful
+                reset(); // Reset the form data
+            },
+        });
     };
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -68,6 +73,15 @@ const CreateProjectForm = () => {
                             </Select>
                             {errors.type && <p className="text-sm text-red-500">{errors.type}</p>}
                         </div>
+                        <div className="grid w-full gap-3">
+                            <Label htmlFor="due_date">Due Date</Label>
+                            <Input
+                                type="date"
+                                className="w-full items-center justify-start dark:text-gray-200"
+                                onChange={(e) => setData('due_date', e.target.value)}
+                                placeholder="Select due date"
+                            />
+                        </div>
                         <div className="grid gap-3">
                             <Label htmlFor="username-1">Content Link </Label>
                             <div className="relative w-full">
@@ -82,6 +96,7 @@ const CreateProjectForm = () => {
                             </div>
                             {errors.attachment_link && <p className="text-sm text-red-500">{errors.attachment_link}</p>}
                         </div>
+
                         <div className="grid gap-3">
                             <Label htmlFor="username-1">Description</Label>
                             <Textarea value={data.description} onChange={(e) => setData('description', e.target.value)} />
@@ -90,7 +105,13 @@ const CreateProjectForm = () => {
                     </div>
                     <DialogFooter className="mt-4">
                         <Button type="submit" className="w-1/2" disabled={processing}>
-                            {processing ? 'Creating...' : 'Create'}
+                            {processing ? (
+                                <>
+                                    <LoaderCircle className="animate-spin" /> Creating...
+                                </>
+                            ) : (
+                                'Create'
+                            )}
                         </Button>
                         <DialogClose asChild>
                             <Button variant="outline" className="w-1/2">

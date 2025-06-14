@@ -14,8 +14,9 @@ class Project extends Model
         'type',
         'attachment_link',
         'assigned_to',
-
+        'due_date',
         'description',
+        'price',
 
     ];
 

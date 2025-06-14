@@ -13,9 +13,17 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        // dd('tested');
+        $projects = Project::with('assignee', 'creator')->get();
+
+        $projectStats = [
+            'open' => $projects->where('status', 'open')->count(),
+            'active' => $projects->where('status', 'claimed')->count(),
+            'under_review' => $projects->where('status', 'under_review')->count(),
+            'completed' => $projects->where('status', 'completed')->count(),
+        ];
         return Inertia::render('projects/index', [
-            'projects' => Project::with('assignee', 'creator')->get()
+            'projects' => $projects,
+            'projectStats' => $projectStats,
         ]);
     }
 
@@ -39,7 +47,10 @@ class ProjectController extends Controller
             'description' => 'nullable|string',
             'type' => 'required|string',
             'attachment_link' => 'nullable|url',
+            'due_date' => 'nullable|date',
+
         ]);
+        // dd($request->due_date);
 
         Project::create($request->all());
 
