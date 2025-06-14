@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('tenant_id')->nullable();
+            $table->string('tenant_id')->nullable()->default(null);
             $table->string('title');
             $table->longText('description')->nullable();
             $table->string('type');
