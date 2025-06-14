@@ -42,7 +42,9 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'tenant' => tenant('id'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
+            'justLogged' => fn () => $request->session()->get('justLogged'),
             'auth' => [
                 'user' => $request->user(),
             ],
