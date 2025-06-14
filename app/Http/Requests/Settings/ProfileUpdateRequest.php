@@ -25,8 +25,8 @@ class ProfileUpdateRequest extends FormRequest
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')
-                    ->where('tenant_id', tenant('id'))
-                    ->ignore($this->user()->id),
+                    ->ignore($this->user()->id)
+                    ->when(tenant(), fn ($rule) => $rule->where('tenant_id', tenant('id')))
             ],
         ];
     }    

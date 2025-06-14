@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
                 'lowercase',
                 'email',
                 'max:255',
-                Rule::unique('users', 'email')->where('tenant_id', tenant('id')),
+                Rule::unique('users', 'email')->when(tenant(), fn ($rule) => $rule->where('tenant_id', tenant('id'))),
             ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
