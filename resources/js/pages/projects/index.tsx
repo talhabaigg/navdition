@@ -26,9 +26,9 @@ export default function Dashboard() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <h1 className="px-4 text-lg font-semibold">This month</h1>
-            <div className="grid auto-rows-min gap-4 p-4 md:grid-cols-4">
-                <Card className="flex justify-between p-4">
+            <h1 className="px-2 text-lg font-semibold">This month</h1>
+            <div className="grid auto-rows-min gap-2 p-2 md:grid-cols-4">
+                <Card className="flex justify-between p-2">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col items-start justify-between gap-2">
                             <span>Open</span>
@@ -39,7 +39,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </Card>
-                <Card className="flex justify-between p-4">
+                <Card className="flex justify-between p-2">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col items-start justify-between gap-2">
                             <span>In-Progress</span>
@@ -50,7 +50,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </Card>
-                <Card className="flex justify-between p-4">
+                <Card className="flex justify-between p-2">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col items-start justify-between gap-2">
                             <span>Under review</span>
@@ -61,7 +61,7 @@ export default function Dashboard() {
                         </div>
                     </div>
                 </Card>
-                <Card className="flex justify-between p-4">
+                <Card className="flex justify-between p-2">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex flex-col items-start justify-between gap-2">
                             <span>Completed</span>
@@ -73,11 +73,11 @@ export default function Dashboard() {
                     </div>
                 </Card>
             </div>
-            <div className="mt-2 flex justify-end p-4">
+            <div className="flex justify-between px-2">
+                <h1 className="text-lg font-semibold">Open Projects</h1>
                 <CreateProjectForm />
             </div>
             <div className="flex flex-col gap-4 rounded-xl p-4">
-                <h1 className="text-lg font-semibold">Open Projects</h1>
                 {projects.filter((project) => project.status === 'open').length === 0 ? (
                     <div className="text-center text-gray-500">No open projects available.</div>
                 ) : (
@@ -97,20 +97,6 @@ export default function Dashboard() {
                         <CarouselNext />
                     </Carousel>
                 )}
-            </div>
-
-            <div className="flex flex-1 flex-col gap-4 rounded-xl p-4">
-                <h1 className="text-lg font-semibold">My projects</h1>
-                {projects.filter((project) => project.assigned_to === 1 && project.status === 'claimed').length === 0 ? (
-                    <div className="text-center text-gray-500">No claimed projects available.</div>
-                ) : null}
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    {projects
-                        .filter((project) => project.assigned_to === 1 && project.status === 'claimed')
-                        .map((project) => (
-                            <ProjectCard key={project.id} project={project} />
-                        ))}
-                </div>
             </div>
         </AppLayout>
     );
