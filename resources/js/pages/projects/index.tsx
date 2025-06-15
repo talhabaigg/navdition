@@ -1,5 +1,6 @@
+import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
@@ -25,7 +26,7 @@ export default function Dashboard() {
     const { projects, projectStats } = usePage<{ projects: Project[]; projectStats: ProjectStats }>().props;
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title="Projects" />
             <h1 className="px-2 text-lg font-semibold">This month</h1>
             <div className="grid auto-rows-min gap-2 p-2 md:grid-cols-4">
                 <Card className="flex justify-between p-2">
@@ -74,30 +75,94 @@ export default function Dashboard() {
                 </Card>
             </div>
             <div className="flex justify-between px-2">
-                <h1 className="text-lg font-semibold">Open Projects</h1>
                 <CreateProjectForm />
             </div>
-            <div className="flex flex-col gap-4 rounded-xl p-4">
-                {projects.filter((project) => project.status === 'open').length === 0 ? (
-                    <div className="text-center text-gray-500">No open projects available.</div>
-                ) : (
-                    <Carousel className="w-full">
-                        <CarouselContent>
-                            {projects
-                                .filter((project) => project.status === 'open')
-                                .map((project) => (
-                                    <CarouselItem key={project.id} className="basis-full pl-2 sm:basis-1/2 md:basis-1/3">
-                                        <div className="mx-2 p-1">
-                                            <ProjectCard project={project} />
-                                        </div>
-                                    </CarouselItem>
-                                ))}
-                        </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
-                    </Carousel>
-                )}
-            </div>
+            <Tabs defaultValue="open" className="w-full p-2">
+                <TabsList className="w-full justify-between">
+                    <TabsTrigger value="open">Open</TabsTrigger>
+                    <TabsTrigger value="claimed">In-Progress</TabsTrigger>
+                    <TabsTrigger value="waiting">Waiting for review</TabsTrigger>
+                    <TabsTrigger value="completed">Completed</TabsTrigger>
+                </TabsList>
+                <TabsContent value="open" className="w-full">
+                    {' '}
+                    <div className="grid auto-rows-min gap-2 md:grid-cols-3">
+                        {projects
+                            .filter((project) => project.status === 'open')
+                            .map((project) => (
+                                <ProjectCard project={project} key={project.id} />
+                            ))}
+                    </div>
+                </TabsContent>
+                <TabsContent value="claimed">
+                    {(() => {
+                        // Group claimed projects by assignee name
+                        const claimedProjects = projects.filter((project) => project.status === 'claimed');
+                        const grouped: Record<string, Project[]> = {};
+                        claimedProjects.forEach((project) => {
+                            const assignee = project.assignee?.name || 'Unassigned';
+                            if (!grouped[assignee]) grouped[assignee] = [];
+                            grouped[assignee].push(project);
+                        });
+                        return Object.entries(grouped).map(([assignee, projects]) => (
+                            <div key={assignee} className="mb-6">
+                                <h2 className="mb-2 text-lg font-semibold">
+                                    <Badge variant="outline">{assignee}</Badge>
+                                </h2>
+                                <div className="grid auto-rows-min gap-2 md:grid-cols-3">
+                                    {projects.map((project) => (
+                                        <ProjectCard project={project} key={project.id} />
+                                    ))}
+                                </div>
+                            </div>
+                        ));
+                    })()}
+                </TabsContent>
+                <TabsContent value="waiting">
+                    {(() => {
+                        // Group waiting projects by assignee name
+                        const waitingProjects = projects.filter((project) => project.status === 'waiting');
+                        const grouped: Record<string, Project[]> = {};
+                        waitingProjects.forEach((project) => {
+                            const assignee = project.assignee?.name || 'Unassigned';
+                            if (!grouped[assignee]) grouped[assignee] = [];
+                            grouped[assignee].push(project);
+                        });
+                        return Object.entries(grouped).map(([assignee, projects]) => (
+                            <div key={assignee} className="mb-6">
+                                <h2 className="mb-2 text-lg font-semibold">{assignee}</h2>
+                                <div className="grid auto-rows-min gap-2 md:grid-cols-3">
+                                    {projects.map((project) => (
+                                        <ProjectCard project={project} key={project.id} />
+                                    ))}
+                                </div>
+                            </div>
+                        ));
+                    })()}
+                </TabsContent>
+                <TabsContent value="completed">
+                    {(() => {
+                        // Group completed projects by assignee name
+                        const completedProjects = projects.filter((project) => project.status === 'completed');
+                        const grouped: Record<string, Project[]> = {};
+                        completedProjects.forEach((project) => {
+                            const assignee = project.assignee?.name || 'Unassigned';
+                            if (!grouped[assignee]) grouped[assignee] = [];
+                            grouped[assignee].push(project);
+                        });
+                        return Object.entries(grouped).map(([assignee, projects]) => (
+                            <div key={assignee} className="mb-6">
+                                <h2 className="mb-2 text-lg font-semibold">{assignee}</h2>
+                                <div className="grid auto-rows-min gap-2 md:grid-cols-3">
+                                    {projects.map((project) => (
+                                        <ProjectCard project={project} key={project.id} />
+                                    ))}
+                                </div>
+                            </div>
+                        ));
+                    })()}
+                </TabsContent>
+            </Tabs>
         </AppLayout>
     );
 }

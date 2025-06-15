@@ -13,7 +13,18 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with('assignee', 'creator')->get();
+        if (auth()->user()->hasRole("admin")) {
+            // If the user is an admin, show all projects
+            $projects = Project::with('assignee', 'creator')->get();
+        } else {
+            $projects = Project::with('assignee', 'creator')
+                ->where(function ($query) {
+                    $query->whereNull('assigned_to')
+                        ->where('status', 'open')
+                        ->orWhere('assigned_to', auth()->id());
+                })
+                ->get();
+        }
 
         $projectStats = [
             'open' => $projects->where('status', 'open')->count(),
@@ -21,9 +32,18 @@ class ProjectController extends Controller
             'under_review' => $projects->where('status', 'under_review')->count(),
             'completed' => $projects->where('status', 'completed')->count(),
         ];
+
+        $activeProjectsByAssignee = $projects
+            ->where('status', 'claimed')
+            ->groupBy('assigned_to')
+            ->map(function ($group) {
+                return $group->values();
+            });
+
         return Inertia::render('projects/index', [
             'projects' => $projects,
             'projectStats' => $projectStats,
+            'activeProjects' => $activeProjectsByAssignee,
         ]);
     }
 

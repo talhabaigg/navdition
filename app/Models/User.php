@@ -9,11 +9,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, BelongsToTenant;
+    use HasFactory, Notifiable, BelongsToTenant, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -62,16 +64,17 @@ class User extends Authenticatable
     protected function tenants(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->tenant_id ? [] :
-                app(config('tenancy.domain_model'))->whereIn("tenant_id",
-                    User::where('email', $this->email)
-                        ->whereNotNull('tenant_id')
-                        ->pluck('tenant_id')
-                        ->filter()
-                        ->unique()
-                        ->values()
-                        ->all()
-                )->get()
+            get: fn() => $this->tenant_id ? [] :
+            app(config('tenancy.domain_model'))->whereIn(
+                "tenant_id",
+                User::where('email', $this->email)
+                    ->whereNotNull('tenant_id')
+                    ->pluck('tenant_id')
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all()
+            )->get()
         );
     }
 }
