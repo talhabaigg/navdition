@@ -1,9 +1,10 @@
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem, User } from '@/types';
-import { usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 export default function UsersIndex() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -47,6 +48,11 @@ export default function UsersIndex() {
                                 </TableCell>
                                 <TableCell>{user.last_login_at ? new Date(user.last_login_at).toLocaleString() : ''}</TableCell>
                                 <TableCell>{user.last_login_ip || 'N/A'}</TableCell>
+                                <TableCell>
+                                    <Link href={route('users.show', user.id)}>
+                                        <Button variant="secondary">View</Button>
+                                    </Link>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
