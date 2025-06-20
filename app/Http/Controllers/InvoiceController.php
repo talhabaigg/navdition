@@ -33,7 +33,37 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'invoice_number' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'invoice_date' => 'required|date',
+            'due_date' => 'required|date|after_or_equal:invoice_date',
+            'amount' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
+            'invoice_items' => 'required|array',
+            'invoice_items.*.description' => 'required|string|max:255',
+            'invoice_items.*.quantity' => 'required|numeric|min:0',
+            'invoice_items.*.rate' => 'required|numeric|min:0',
+            'invoice_items.*.total' => 'required|numeric|min:0',
+        ]);
+
+        $data['user_id'] = auth()->id(); // Assuming you want to associate the invoice with the authenticated user
+
+        $invoice = Invoice::create($data);
+
+        foreach ($data['invoice_items'] as $item) {
+            $invoice->items()->create([
+                'description' => $item['description'],
+                'quantity' => $item['quantity'],
+                'rate' => $item['rate'],
+                'total' => $item['total'],
+            ]);
+        }
+
+        return redirect()->route('invoices.index')->with('success', 'Invoice created successfully.');
     }
 
     /**

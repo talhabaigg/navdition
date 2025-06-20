@@ -7,8 +7,8 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { CircleMinus, CirclePlus, IndianRupee } from 'lucide-react';
-import React from 'react';
-export default function UsersIndex() {
+import React, { useEffect } from 'react';
+export default function UsersIndex({ auth }: { auth: { user: any; permissions: string[] } }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
@@ -17,13 +17,13 @@ export default function UsersIndex() {
     ];
     const { data, setData, post, processing, errors } = useForm({
         invoice_number: '',
-        name: '',
-        email: '',
+        name: auth.user?.name || '',
+        email: auth.user?.email,
         address: '',
         phone: '',
-        invoice_date: '',
-        due_date: '',
-        amount: '',
+        invoice_date: new Date().toISOString().split('T')[0], // Set current date as default
+        due_date: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0], // Set due date to 30 days from now
+        amount: 0,
         notes: '',
         payment_method: '',
         invoice_items: [
@@ -35,10 +35,17 @@ export default function UsersIndex() {
             },
         ],
     });
+    const total = data.invoice_items.reduce((sum, item) => sum + item.total, 0).toFixed(2);
+    useEffect(() => {
+        if (data.invoice_items.length > 0) {
+            setData('amount', Number(total));
+        }
+    }, [data.invoice_items]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/users', {
+        setData('amount', total);
+        post('/invoices', {
             onSuccess: () => {
                 setData({ name: '', email: '' }); // Reset form after successful submission
             },
@@ -46,44 +53,65 @@ export default function UsersIndex() {
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <div>
+                {errors && Object.keys(errors).length > 0 && (
+                    <div className="mb -4 rounded bg-red-100 p-4 text-red-800">
+                        <h3 className="font-semibold">There were errors with your submission:</h3>
+                        <ul className="list-disc pl-5">
+                            {Object.values(errors).map((error, index) => (
+                                <li key={index}>{error}</li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
             <form onSubmit={handleSubmit}>
                 <Card className="mx-2 p-0">
                     <div className="grid grid-cols-1 gap-1 p-2 md:grid-cols-3">
                         <div className="flex flex-col gap-1">
                             <Label>Invoice Number</Label>
                             <Input value={data.invoice_number} onChange={(e) => setData('invoice_number', e.target.value)} />
+                            {errors.invoice_number && <div className="text-red-500">{errors.invoice_number}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Name</Label>
                             <Input value={data.name} onChange={(e) => setData('name', e.target.value)} />
+                            {errors.name && <div className="text-red-500">{errors.name}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Email</Label>
                             <Input type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} />
+                            {errors.email && <div className="text-red-500">{errors.email}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Address</Label>
                             <Input value={data.address} onChange={(e) => setData('address', e.target.value)} />
+                            {errors.address && <div className="text-red-500">{errors.address}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Phone</Label>
                             <Input value={data.phone} onChange={(e) => setData('phone', e.target.value)} />
+                            {errors.phone && <div className="text-red-500">{errors.phone}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Invoice Date</Label>
                             <Input type="date" value={data.invoice_date} onChange={(e) => setData('invoice_date', e.target.value)} />
+                            {errors.invoice_date && <div className="text-red-500">{errors.invoice_date}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Due Date</Label>
                             <Input type="date" value={data.due_date} onChange={(e) => setData('due_date', e.target.value)} />
+                            {errors.due_date && <div className="text-red-500">{errors.due_date}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Pay Details</Label>
                             <Input value={data.payment_method} onChange={(e) => setData('payment_method', e.target.value)} />
+                            {errors.payment_method && <div className="text-red-500">{errors.payment_method}</div>}
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Notes</Label>
                             <Input value={data.notes} onChange={(e) => setData('notes', e.target.value)} />
+                            {errors.notes && <div className="text-red-500">{errors.notes}</div>}
                         </div>
                     </div>
                 </Card>
@@ -166,6 +194,7 @@ export default function UsersIndex() {
                                     <TableCell className="flex items-center gap-1 font-bold">
                                         <IndianRupee className="h-3 w-3" />
                                         {data.invoice_items.reduce((sum, item) => sum + item.total, 0).toFixed(2)}
+                                        {errors.amount && <div className="text-red-500">{errors.amount}</div>}
                                     </TableCell>
                                 </TableRow>
                             </TableBody>

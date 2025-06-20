@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -5,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Search } from 'lucide-react';
+import { IndianRupee, Pencil, Search } from 'lucide-react';
 export default function UsersIndex({ invoices }: { invoices: any[] }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -49,6 +50,30 @@ export default function UsersIndex({ invoices }: { invoices: any[] }) {
                                 <TableCell className="font-medium">{invoice.id}</TableCell>
                                 <TableCell>{invoice.name}</TableCell>
                                 <TableCell>{invoice.email}</TableCell>
+                                <TableCell>{new Date(invoice.invoice_date).toLocaleDateString()}</TableCell>
+                                <TableCell>{new Date(invoice.due_date).toLocaleDateString()}</TableCell>
+                                <TableCell>
+                                    <div className="flex items-center space-x-1">
+                                        {' '}
+                                        <IndianRupee className="h-3 w-3" />
+                                        {Number(invoice.amount).toFixed(2)}
+                                    </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge>{invoice.status}</Badge>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex items-center space-x-2">
+                                        <Link href={`/invoices/${invoice.id}`}>
+                                            <Button variant="secondary">View</Button>
+                                        </Link>
+                                        <Link href={`/invoices/${invoice.id}/edit`}>
+                                            <Button variant="secondary" className="">
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
