@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
@@ -39,6 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('users.index');
     Route::get('/users/{user}', [UserController::class, 'show'])
         ->name('users.show');
+
+
+    Route::resource('invoices', InvoiceController::class)->names('invoices');
 });
 
 require __DIR__ . '/settings.php';
