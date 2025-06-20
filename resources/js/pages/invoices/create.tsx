@@ -134,9 +134,13 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
                                         <TableCell>
                                             <Input
                                                 className="min-w-[300px] border-none shadow-none"
-                                                placeholder="Enter item description "
+                                                placeholder="Enter item description"
                                                 value={item.description}
-                                                onChange={(e) => setData('invoice_items', [{ ...item, description: e.target.value }])}
+                                                onChange={(e) => {
+                                                    const updatedItems = [...data.invoice_items];
+                                                    updatedItems[index].description = e.target.value;
+                                                    setData('invoice_items', updatedItems);
+                                                }}
                                             />
                                         </TableCell>
                                         <TableCell>
