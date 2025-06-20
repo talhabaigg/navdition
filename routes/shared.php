@@ -20,7 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/projects/{project}/release', [ProjectController::class, 'release'])
         ->name('projects.release');
     Route::get('/projects/{project}/complete', [ProjectController::class, 'complete'])
-        ->name('projects.complete')->role('admin');
+        ->name('projects.complete')->middleware('role:admin');
     Route::get('/projects/{project}/submit', [ProjectController::class, 'submit'])
         ->name('projects.submit');
 
