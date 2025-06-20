@@ -8,8 +8,9 @@ import DeleteProjectDialog from './deleteProjectModal';
 
 interface ProjectCardProps {
     project: Project;
+    permissions: string[];
 }
-const ProjectCard = ({ project }: ProjectCardProps) => {
+const ProjectCard = ({ project, permissions }: ProjectCardProps) => {
     return (
         <Card className="p-4">
             <CardTitle className="flex justify-between">
@@ -34,11 +35,12 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
             </CardContent>
             <CardFooter className="justify-between space-x-2 p-0">
                 <div>
-                    {project.assigned_to ? (
+                    {project.assigned_to && project.status === 'claimed' && (
                         <Link href={route('projects.release', project.id)}>
                             <Button variant="secondary">Release</Button>
                         </Link>
-                    ) : (
+                    )}
+                    {project.status === 'open' && (
                         <Link href={route('projects.claim', project.id)}>
                             <Button>Claim</Button>
                         </Link>
@@ -47,7 +49,7 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
 
                 <div className="flex items-center justify-end space-x-2">
                     <div>
-                        {project.assigned_to ? (
+                        {project.assigned_to && project.status === 'under_review' && permissions.includes('complete projects') ? (
                             <Link href={route('projects.complete', project.id)}>
                                 <Button variant="secondary">
                                     <CircleCheck />
@@ -57,7 +59,16 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
                             ''
                         )}
                     </div>
-                    <DeleteProjectDialog projectId={project.id} />
+                    <div>
+                        {project.assigned_to && project.status === 'claimed' ? (
+                            <Link href={route('projects.submit', project.id)}>
+                                <Button variant="secondary">Submit</Button>
+                            </Link>
+                        ) : (
+                            ''
+                        )}
+                    </div>
+                    {permissions.includes('delete projects') && <DeleteProjectDialog projectId={project.id} />}
                 </div>
             </CardFooter>
         </Card>

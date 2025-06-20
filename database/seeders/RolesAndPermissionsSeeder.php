@@ -17,7 +17,9 @@ class RolesAndPermissionsSeeder extends Seeder
         // Define permissions
         $permissions = [
             'create projects',
+            'approve projects',
             'complete projects',
+            'delete projects',
         ];
 
         // Create roles if they don't exist

@@ -20,6 +20,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('projects.release');
     Route::get('/projects/{project}/complete', [ProjectController::class, 'complete'])
         ->name('projects.complete');
+    Route::get('/projects/{project}/submit', [ProjectController::class, 'submit'])
+        ->name('projects.submit');
 });
 
 require __DIR__ . '/settings.php';

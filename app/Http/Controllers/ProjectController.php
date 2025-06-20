@@ -147,4 +147,15 @@ class ProjectController extends Controller
         $project->save();
         return redirect()->back()->with('success', 'Project marked as completed successfully.');
     }
+
+    public function submit(Project $project)
+    {
+        if ($project->assigned_to !== auth()->id()) {
+            return redirect()->route('projects.index')->with('error', 'You cannot submit this project.');
+        }
+        // Mark the project as under review
+        $project->status = 'under_review';
+        $project->save();
+        return redirect()->back()->with('success', 'Project submitted for review successfully.');
+    }
 }

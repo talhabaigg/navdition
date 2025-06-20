@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { User, type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { BadgeAlert, CircleCheck, Clock, Folder } from 'lucide-react';
 import CreateProjectForm from './index-partials/createProjectForm';
@@ -23,7 +23,12 @@ interface ProjectStats {
 }
 
 export default function Dashboard() {
-    const { projects, projectStats } = usePage<{ projects: Project[]; projectStats: ProjectStats }>().props;
+    const { projects, projectStats, auth } = usePage<{
+        projects: Project[];
+        projectStats: ProjectStats;
+        auth: { user: User; permissions: string[] };
+    }>().props;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Projects" />
@@ -74,9 +79,12 @@ export default function Dashboard() {
                     </div>
                 </Card>
             </div>
-            <div className="flex justify-between px-2">
-                <CreateProjectForm />
-            </div>
+            {auth.permissions.includes('create projects') && (
+                <div className="flex justify-between px-2">
+                    <CreateProjectForm />
+                </div>
+            )}
+            <div></div>
             <Tabs defaultValue="open" className="w-full p-2">
                 <TabsList className="w-full justify-between">
                     <TabsTrigger value="open">Open</TabsTrigger>
@@ -90,7 +98,7 @@ export default function Dashboard() {
                         {projects
                             .filter((project) => project.status === 'open')
                             .map((project) => (
-                                <ProjectCard project={project} key={project.id} />
+                                <ProjectCard project={project} key={project.id} permissions={auth.permissions} />
                             ))}
                     </div>
                 </TabsContent>
@@ -111,7 +119,7 @@ export default function Dashboard() {
                                 </h2>
                                 <div className="grid auto-rows-min gap-2 md:grid-cols-3">
                                     {projects.map((project) => (
-                                        <ProjectCard project={project} key={project.id} />
+                                        <ProjectCard project={project} key={project.id} permissions={auth.permissions} />
                                     ))}
                                 </div>
                             </div>
@@ -121,7 +129,7 @@ export default function Dashboard() {
                 <TabsContent value="waiting">
                     {(() => {
                         // Group waiting projects by assignee name
-                        const waitingProjects = projects.filter((project) => project.status === 'waiting');
+                        const waitingProjects = projects.filter((project) => project.status === 'under_review');
                         const grouped: Record<string, Project[]> = {};
                         waitingProjects.forEach((project) => {
                             const assignee = project.assignee?.name || 'Unassigned';
@@ -133,7 +141,7 @@ export default function Dashboard() {
                                 <h2 className="mb-2 text-lg font-semibold">{assignee}</h2>
                                 <div className="grid auto-rows-min gap-2 md:grid-cols-3">
                                     {projects.map((project) => (
-                                        <ProjectCard project={project} key={project.id} />
+                                        <ProjectCard project={project} key={project.id} permissions={auth.permissions} />
                                     ))}
                                 </div>
                             </div>
@@ -155,7 +163,7 @@ export default function Dashboard() {
                                 <h2 className="mb-2 text-lg font-semibold">{assignee}</h2>
                                 <div className="grid auto-rows-min gap-2 md:grid-cols-3">
                                     {projects.map((project) => (
-                                        <ProjectCard project={project} key={project.id} />
+                                        <ProjectCard project={project} key={project.id} permissions={auth.permissions} />
                                     ))}
                                 </div>
                             </div>
