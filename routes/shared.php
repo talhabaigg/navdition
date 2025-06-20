@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -22,6 +23,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('projects.complete');
     Route::get('/projects/{project}/submit', [ProjectController::class, 'submit'])
         ->name('projects.submit');
+
+
+    Route::get('/users', [UserController::class, 'index'])
+        ->name('users.index');
 });
 
 require __DIR__ . '/settings.php';
