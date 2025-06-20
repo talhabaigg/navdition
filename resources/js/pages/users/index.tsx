@@ -45,7 +45,7 @@ export default function UsersIndex() {
                                         <Badge>Member</Badge>
                                     )}
                                 </TableCell>
-                                <TableCell>{user.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : ''}</TableCell>
+                                <TableCell>{user.last_login_at ? new Date(user.last_login_at).toLocaleString() : ''}</TableCell>
                                 <TableCell>{user.last_login_ip || 'N/A'}</TableCell>
                             </TableRow>
                         ))}

@@ -139,9 +139,7 @@ class ProjectController extends Controller
     }
     public function complete(Project $project)
     {
-        if ($project->assigned_to !== auth()->id()) {
-            return redirect()->route('projects.index')->with('error', 'You cannot complete this project.');
-        }
+
         // Mark the project as completed
         $project->status = 'completed';
         $project->save();
