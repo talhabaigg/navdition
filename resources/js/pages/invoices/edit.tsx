@@ -8,25 +8,39 @@ import { BreadcrumbItem } from '@/types';
 import { useForm } from '@inertiajs/react';
 import { CircleMinus, CirclePlus, DollarSign } from 'lucide-react';
 import React, { useEffect } from 'react';
-export default function UsersIndex({ auth }: { auth: { user: any; permissions: string[] } }) {
+
+export default function InvoiceEdit({ auth, invoice }: { auth: { user: any; permissions: string[] }; invoice: any }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Dashboard',
-            href: '/dashboard',
+            title: 'Invoices',
+            href: '/invoices',
+        },
+        {
+            title: `Edit Invoice #${invoice.invoice_number}`,
+            href: `/invoices/${invoice.id}/edit`,
         },
     ];
-    const { data, setData, post, processing, errors } = useForm({
-        invoice_number: '',
-        name: auth.user?.name || '',
-        email: auth.user?.email,
-        address: '',
-        phone: '',
-        invoice_date: new Date().toISOString().split('T')[0], // Set current date as default
-        due_date: new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0], // Set due date to 30 days from now
-        amount: 0,
-        notes: '',
-        payment_method: '',
-        invoice_items: [
+
+    const { data, setData, put, processing, errors } = useForm({
+        invoice_number: invoice?.invoice_number || '',
+        name: invoice?.name || '', // or user name
+        email: invoice?.email || '',
+        address: invoice?.address || '',
+        phone: invoice?.phone || '',
+        invoice_date: invoice?.invoice_date ? new Date(invoice.invoice_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        due_date: invoice?.due_date
+            ? new Date(invoice.due_date).toISOString().split('T')[0]
+            : new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0],
+        amount: invoice?.amount || 0,
+        notes: invoice?.notes || '',
+        payment_method: invoice?.payment_method || '',
+        invoice_items: invoice?.items?.map((item: any) => ({
+            id: item.id || null,
+            description: item.description || '',
+            quantity: item.quantity || 1,
+            rate: item.rate || 0,
+            total: item.total || 0,
+        })) || [
             {
                 description: '',
                 quantity: 1,
@@ -35,7 +49,9 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
             },
         ],
     });
-    const total = data.invoice_items.reduce((sum, item) => sum + item.total, 0).toFixed(2);
+
+    const total = data.invoice_items.reduce((sum, item) => sum + (Number(item.total) || 0), 0).toFixed(2);
+
     useEffect(() => {
         if (data.invoice_items.length > 0) {
             setData('amount', Number(total));
@@ -44,27 +60,25 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        setData('amount', total);
-        post('/invoices', {
-            onSuccess: () => {
-                setData({ name: '', email: '' }); // Reset form after successful submission
-            },
+        setData('amount', Number(total));
+        put(`/invoices/${invoice.id}`, {
+            preserveScroll: true,
         });
     };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <div>
-                {errors && Object.keys(errors).length > 0 && (
-                    <div className="mb -4 rounded bg-red-100 p-4 text-red-800">
-                        <h3 className="font-semibold">There were errors with your submission:</h3>
-                        <ul className="list-disc pl-5">
-                            {Object.values(errors).map((error, index) => (
-                                <li key={index}>{error}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-            </div>
+            {errors && Object.keys(errors).length > 0 && (
+                <div className="mb-4 rounded bg-red-100 p-4 text-red-800">
+                    <h3 className="font-semibold">There were errors with your submission:</h3>
+                    <ul className="list-disc pl-5">
+                        {Object.values(errors).map((error, index) => (
+                            <li key={index}>{error}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+
             <form onSubmit={handleSubmit}>
                 <Card className="mx-2 p-0">
                     <div className="grid grid-cols-1 gap-1 p-2 md:grid-cols-3">
@@ -115,12 +129,13 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
                         </div>
                     </div>
                 </Card>
-                <Card className="e mx-2 mt-4 p-0">
+
+                <Card className="mx-2 mt-4 p-0">
                     <div className="grid grid-cols-1 gap-1 p-2">
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[100px]">Item </TableHead>
+                                    <TableHead className="w-[100px]">Item</TableHead>
                                     <TableHead>Description</TableHead>
                                     <TableHead>Quantity</TableHead>
                                     <TableHead>Rate</TableHead>
@@ -180,13 +195,7 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
                                                 <span className="absolute left-2">
                                                     <DollarSign className="h-3 w-3 text-muted-foreground" />
                                                 </span>
-                                                <Input
-                                                    className="w-[100px] border-none pl-5 shadow-none"
-                                                    disabled
-                                                    type="number"
-                                                    value={item.total}
-                                                    onChange={(e) => setData('invoice_items', [{ ...item, total: Number(e.target.value) }])}
-                                                />
+                                                <Input className="w-[100px] border-none pl-5 shadow-none" disabled type="number" value={item.total} />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -197,7 +206,7 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
                                     </TableCell>
                                     <TableCell className="flex items-center gap-1 font-bold">
                                         <DollarSign className="h-3 w-3" />
-                                        {data.invoice_items.reduce((sum, item) => sum + item.total, 0).toFixed(2)}
+                                        {total}
                                         {errors.amount && <div className="text-red-500">{errors.amount}</div>}
                                     </TableCell>
                                 </TableRow>
@@ -205,6 +214,7 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
                         </Table>
                     </div>
                 </Card>
+
                 <div className="flex justify-between p-4">
                     <div className="flex items-center">
                         <Button
@@ -212,7 +222,10 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
                             variant="secondary"
                             className="mr-2"
                             onClick={() =>
-                                setData({ ...data, invoice_items: [...data.invoice_items, { description: '', quantity: 1, rate: 0, total: 0 }] })
+                                setData({
+                                    ...data,
+                                    invoice_items: [...data.invoice_items, { description: '', quantity: 1, rate: 0, total: 0 }],
+                                })
                             }
                         >
                             <CirclePlus /> Add Item
@@ -227,7 +240,7 @@ export default function UsersIndex({ auth }: { auth: { user: any; permissions: s
                     </div>
 
                     <Button type="submit" disabled={processing}>
-                        Create
+                        Update
                     </Button>
                 </div>
             </form>

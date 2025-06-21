@@ -79,7 +79,10 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        //
+        $invoice->load('items'); // Load related items for editing
+        return Inertia::render('invoices/edit', [
+            'invoice' => $invoice,
+        ]);
     }
 
     /**
@@ -87,7 +90,52 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
-        //
+        $data = $request->validate([
+            'invoice_number' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'address' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'invoice_date' => 'required|date',
+            'due_date' => 'required|date|after_or_equal:invoice_date',
+            'amount' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
+            'invoice_items' => 'required|array',
+            'invoice_items.*.id' => 'nullable|exists:invoice_items,id', // Allow existing item IDs for updates  
+            'invoice_items.*.description' => 'required|string|max:255',
+            'invoice_items.*.quantity' => 'required|numeric|min:0',
+            'invoice_items.*.rate' => 'required|numeric|min:0',
+            'invoice_items.*.total' => 'required|numeric|min:0',
+        ]);
+
+        $invoice->update($data);
+
+        // Update or create invoice items
+        // Collect IDs of items from the request data
+        $itemIds = collect($data['invoice_items'])
+            ->pluck('id')
+            ->filter()
+            ->toArray();
+
+        // Delete items that are not present in the new data
+        $invoice->items()
+            ->whereNotIn('id', $itemIds)
+            ->delete();
+
+        // Update or create invoice items
+        foreach ($data['invoice_items'] as $item) {
+            $invoice->items()->updateOrCreate(
+                ['id' => $item['id'] ?? null], // Use existing item ID if available
+                [
+                    'description' => $item['description'],
+                    'quantity' => $item['quantity'],
+                    'rate' => $item['rate'],
+                    'total' => $item['total'],
+                ]
+            );
+        }
+
+        return redirect()->route('invoices.index')->with('success', 'Invoice updated successfully.');
     }
 
     /**
