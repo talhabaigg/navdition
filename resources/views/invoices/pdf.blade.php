@@ -67,9 +67,9 @@
         <div class="from">
             <h2>To</h2>
             <p>Navjot Singh</p>
-            <p>ABN: 9999999999</p>
-            <p>49/50 Perkin St,<br>Calamvale, QLD 4116</p>
-            <p>Phone: 07 3003 730</p>
+            <p>ABN: 74862256622</p>
+            <p>78/50 perkins street,<br>Calamvale, QLD 4116</p>
+            <p>Phone: +61 448 044 142</p>
         </div>
 
         <div class="to">
