@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { IndianRupee, Pencil, Search } from 'lucide-react';
+import { DollarSign, Pencil, Search } from 'lucide-react';
 export default function UsersIndex({ invoices }: { invoices: any[] }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -55,7 +55,7 @@ export default function UsersIndex({ invoices }: { invoices: any[] }) {
                                 <TableCell>
                                     <div className="flex items-center space-x-1">
                                         {' '}
-                                        <IndianRupee className="h-3 w-3" />
+                                        <DollarSign className="h-3 w-3" />
                                         {Number(invoice.amount).toFixed(2)}
                                     </div>
                                 </TableCell>
@@ -67,6 +67,9 @@ export default function UsersIndex({ invoices }: { invoices: any[] }) {
                                         <Link href={`/invoices/${invoice.id}`}>
                                             <Button variant="secondary">View</Button>
                                         </Link>
+                                        <a href={`/invoices/${invoice.id}/print`} target="_blank" rel="noopener noreferrer">
+                                            <Button variant="secondary">Print</Button>
+                                        </a>
                                         <Link href={`/invoices/${invoice.id}/edit`}>
                                             <Button variant="secondary" className="">
                                                 <Pencil className="h-4 w-4" />

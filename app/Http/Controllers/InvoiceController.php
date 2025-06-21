@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class InvoiceController extends Controller
 {
     /**
@@ -144,5 +144,15 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         //
+    }
+
+    public function print(Invoice $invoice)
+    {
+        // Load the invoice with its items
+
+        $invoice->load('items');
+        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
+        // Return a view for printing the invoice
+        return $pdf->download("invoice-{$invoice->invoice_number}.pdf");
     }
 }

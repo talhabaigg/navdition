@@ -43,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::resource('invoices', InvoiceController::class)->names('invoices');
+    Route::get('/invoices/{invoice}/print', [InvoiceController::class, 'print'])
+        ->name('invoices.print');
 });
 
 require __DIR__ . '/settings.php';
