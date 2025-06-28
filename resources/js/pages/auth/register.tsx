@@ -12,6 +12,7 @@ import AuthLayout from '@/layouts/auth-layout';
 type RegisterForm = {
     name: string;
     email: string;
+    tenant_id: string;
     password: string;
     password_confirmation: string;
 };
@@ -20,6 +21,7 @@ export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
+        tenant_id: '', // This can be set to a default value or left empty if not required
         password: '',
         password_confirmation: '',
     });
@@ -36,6 +38,27 @@ export default function Register() {
             <Head title="Register" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
+                    <div className="grid gap-2">
+                        <Label htmlFor="tenant_id">Account Name</Label>
+                        <div className="flex rounded-md border border-input focus-within:ring-1 focus-within:ring-ring">
+                            <Input
+                                id="tenant_id"
+                                type="text"
+                                required
+                                autoFocus
+                                tabIndex={1}
+                                autoComplete="tenant_id"
+                                value={data.tenant_id}
+                                onChange={(e) => setData('tenant_id', e.target.value.replace(/\s/g, ''))}
+                                disabled={processing}
+                                placeholder="Your company or group name"
+                                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                            />
+                            <span className="flex items-center border-l px-3 text-sm text-muted-foreground">.navdition.com</span>
+                        </div>
+
+                        <InputError message={errors.tenant_id} className="mt-2" />
+                    </div>
                     <div className="grid gap-2">
                         <Label htmlFor="name">Name</Label>
                         <Input
