@@ -69,7 +69,7 @@ class RegisteredUserController extends Controller
         // 4. Create the first user under that tenant
         //    (be sure your User model has a tenant_id column and default TenantScope)
         $user = User::create([
-            'tenant_id' => $tenant->id,
+            'tenant_id' => $validated['tenant_id'],
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
