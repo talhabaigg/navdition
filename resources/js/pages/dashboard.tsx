@@ -48,11 +48,13 @@ export default function Dashboard({
         name: user.name,
         projects: user.projects_count,
     }));
+
+    console.log(justLogged, tenant, auth.user.tenants);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
-            {!tenant && justLogged && auth.user.tenants.length > 0 ? (
+            {justLogged ? (
                 <div>
                     <AlertDialog open={true}>
                         <AlertDialogContent>

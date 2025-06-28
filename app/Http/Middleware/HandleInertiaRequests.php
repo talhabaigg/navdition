@@ -46,7 +46,7 @@ class HandleInertiaRequests extends Middleware
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'justLogged' => fn() => $request->session()->get('justLogged'),
             'auth' => [
-                'user' => $request->user()?->load('roles.permissions'),
+                'user' => $request->user(),
                 'isAdmin' => $request->user()?->isAdmin(),
                 'permissions' => $request->user()?->roles->first()?->permissions->pluck('name') ?? collect(),
             ],
