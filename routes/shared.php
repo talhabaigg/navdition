@@ -18,6 +18,8 @@ Route::get('/', function (Request $request) {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
+    ->name('cashier.webhook');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         $users = User::withCount([
@@ -56,7 +58,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/checkout', \App\Http\Controllers\CheckoutController::class)
         ->name('checkout');
-    Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+
+
 });
 
 require __DIR__ . '/settings.php';
