@@ -18,8 +18,8 @@ Route::get('/', function (Request $request) {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
-    ->name('cashier.webhook');
+//Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
+    //->name('cashier.webhook');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         $users = User::withCount([
