@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 Route::get('/', function (Request $request) {
-    // Check if tenant/subdomain is detected
-    if ($request->getHost() !== config('app.domain', 'localhost')) {
+    // If tenancy was not initialized (i.e., tenant not found), redirect to login
+    if (tenancy()->initialized) {
         return redirect()->route('login');
     }
 
+    // Tenant is valid, render tenant home page
     return Inertia::render('welcome');
 })->name('home');
 
