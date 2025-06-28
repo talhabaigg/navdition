@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Laravel\Cashier\Http\Controllers\WebhookController;
 Route::get('/', function (Request $request) {
     // If tenancy was not initialized (i.e., tenant not found), redirect to login
     if (tenancy()->initialized) {
@@ -51,6 +52,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('invoices', InvoiceController::class)->names('invoices');
     Route::get('/invoices/{invoice}/print', [InvoiceController::class, 'print'])
         ->name('invoices.print');
+
+
+    Route::get('/checkout', \App\Http\Controllers\CheckoutController::class)
+        ->name('checkout');
+    Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
 });
 
 require __DIR__ . '/settings.php';
