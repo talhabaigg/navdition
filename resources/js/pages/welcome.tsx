@@ -1,6 +1,6 @@
+import { Card } from '@/components/ui/card';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
 
@@ -47,21 +47,15 @@ export default function Welcome() {
                                 <span className="text-[#6366f1]">All-in-One for Small Teams.</span>
                             </h1>
                             <p className="mx-auto mt-6 max-w-2xl text-lg text-[#4b4b45] lg:mx-0 dark:text-[#bcbcb4]">
-                                Navdition is your team’s workspace for planning content, tracking tasks, and billing clients — purpose-built for 3–5
-                                person creative teams. No fluff. Just focus and flow.
+                                Navdition is your team’s workspace for planning content, tracking tasks, and billing — purpose-built for 3–5 person
+                                creative teams. No fluff. Just focus and flow.
                             </p>
                             <div className="mt-8 flex justify-center gap-4 lg:justify-start">
                                 <Link
-                                    href={auth.user ? route('dashboard') : route('login')}
+                                    href={auth.user ? route('dashboard') : route('register')}
                                     className="rounded-md bg-black px-6 py-2 text-white hover:bg-[#333] dark:bg-white dark:text-black dark:hover:bg-[#ccc]"
                                 >
                                     {auth.user ? 'Go to Dashboard' : 'Start Free Trial'}
-                                </Link>
-                                <Link
-                                    href="#features"
-                                    className="px-6 py-2 text-sm font-medium text-[#1b1b18] underline underline-offset-4 dark:text-[#ededec]"
-                                >
-                                    Learn More
                                 </Link>
                             </div>
                         </section>
@@ -71,13 +65,13 @@ export default function Welcome() {
                             <div>
                                 <h3 className="text-xl font-semibold">🗂️ Project Management</h3>
                                 <p className="mt-2 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">
-                                    Assign tasks, set deadlines, and organize projects for campaigns, YouTube videos, or client work.
+                                    Assign tasks, set deadlines, and organize projects for campaigns, YouTube videos, or podcast work.
                                 </p>
                             </div>
                             <div>
                                 <h3 className="text-xl font-semibold">🧾 Smart Invoicing</h3>
                                 <p className="mt-2 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">
-                                    Create and send branded invoices. Track paid vs overdue. Get paid faster with auto-reminders.
+                                    Create and send invoices. Track paid vs overdue. Get paid faster with auto-reminders.
                                 </p>
                             </div>
                             <div>
@@ -86,34 +80,91 @@ export default function Welcome() {
                                     Designed for small teams of 3–5. Assign roles, share updates, and track progress in real-time.
                                 </p>
                             </div>
-                            <div>
-                                <h3 className="text-xl font-semibold">📦 File & Asset Sharing</h3>
-                                <p className="mt-2 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">
-                                    Keep brand assets, contracts, and briefs all in one place. Attach files directly to tasks and invoices.
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-semibold">📈 Progress & Deadlines</h3>
-                                <p className="mt-2 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">
-                                    Visual project timelines and deadlines help you deliver on time, every time.
-                                </p>
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-semibold">💳 Client Portal</h3>
-                                <p className="mt-2 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">
-                                    Let clients log in to view their invoices, see progress, or upload assets. Fully white-labeled.
-                                </p>
-                            </div>
                         </section>
 
                         {/* Testimonials (Optional placeholder) */}
                         <section className="mt-20 w-full text-center">
                             <h2 className="mb-6 text-2xl font-semibold">Loved by Creators</h2>
                             <p className="mx-auto max-w-xl text-[#4b4b45] dark:text-[#bcbcb4]">
-                                “Navdition has become our go-to workspace. We used to juggle Notion, Trello, and QuickBooks — now we just use this.”
+                                “Navdition has helped our team of 4 editors streamline our workflow and collaborate more effectively.”
                                 <br />
-                                <span className="mt-2 block text-sm italic">— Jessica, Creative Director</span>
+                                <span className="mt-2 block text-sm italic">— Navjot Singh, NSJ Vlogs</span>
                             </p>
+                        </section>
+
+                        <section className="mt-20 w-full text-center">
+                            <Card className="mx-auto mt-6 max-w-full bg-white p-6 shadow-lg dark:bg-[#1a1a1a]">
+                                <h3 className="text-lg font-semibold">Get Started</h3>
+                                <p className="mt-2 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">Sign up today and get 7-days free trial. </p>
+                                <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+                                    <Card className="border bg-white p-6 shadow-lg dark:bg-[#1a1a1a]">
+                                        <h4 className="mb-2 text-lg font-semibold">Starter</h4>
+                                        <div className="mb-2 text-2xl font-bold">
+                                            $5<span className="text-sm font-normal">/user/month</span>
+                                        </div>
+                                        <p className="mb-4 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">
+                                            Perfect for small teams just getting started
+                                        </p>
+                                        <ul className="mb-6 justify-start space-y-2 text-sm">
+                                            <li>✓ Up to 3 users</li>
+                                            <li>✓ Basic project management</li>
+                                            <li>✓ Invoice creation</li>
+                                            <li>✓ Email support</li>
+                                        </ul>
+                                        <Link
+                                            href={route('register')}
+                                            className="block w-full rounded-md border border-[#19140035] px-4 py-2 text-center text-sm hover:bg-[#f5f5f5] dark:border-[#3E3E3A] dark:hover:bg-[#2a2a2a]"
+                                        >
+                                            Get Started
+                                        </Link>
+                                    </Card>
+
+                                    <Card className="relative border-2 border-[#6366f1] bg-white p-6 shadow-lg dark:bg-[#1a1a1a]">
+                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 transform rounded-full bg-[#6366f1] px-3 py-1 text-xs text-white">
+                                            Most Popular
+                                        </div>
+                                        <h4 className="mb-2 text-lg font-semibold">Pro</h4>
+                                        <div className="mb-2 text-2xl font-bold">
+                                            $7<span className="text-sm font-normal">/user/month</span>
+                                        </div>
+                                        <p className="mb-4 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">Best for growing creative teams</p>
+                                        <ul className="mb-6 space-y-2 text-sm">
+                                            <li>✓ Up to 5 users</li>
+                                            <li>✓ Advanced project management</li>
+                                            <li>✓ Smart invoicing & reminders</li>
+                                            <li>✓ Team collaboration tools</li>
+                                            <li>✓ Priority support</li>
+                                        </ul>
+                                        <Link
+                                            href={route('register')}
+                                            className="block w-full rounded-md bg-[#6366f1] px-4 py-2 text-center text-sm text-white hover:bg-[#5856eb]"
+                                        >
+                                            Start Free Trial
+                                        </Link>
+                                    </Card>
+
+                                    <Card className="border bg-white p-6 shadow-lg dark:bg-[#1a1a1a]">
+                                        <h4 className="mb-2 text-lg font-semibold">Enterprise</h4>
+                                        <div className="mb-2 text-2xl font-bold">
+                                            $15<span className="text-sm font-normal">/user/month</span>
+                                        </div>
+                                        <p className="mb-4 text-sm text-[#4b4b45] dark:text-[#bcbcb4]">For established teams with advanced needs</p>
+                                        <ul className="mb-6 space-y-2 text-sm">
+                                            <li>✓ Unlimited users</li>
+                                            <li>✓ Custom workflows</li>
+                                            <li>✓ Advanced reporting</li>
+                                            <li>✓ API access</li>
+                                            <li>✓ Dedicated support</li>
+                                        </ul>
+                                        <Link
+                                            href={route('register')}
+                                            className="block w-full rounded-md border border-[#19140035] px-4 py-2 text-center text-sm hover:bg-[#f5f5f5] dark:border-[#3E3E3A] dark:hover:bg-[#2a2a2a]"
+                                        >
+                                            Contact Sales
+                                        </Link>
+                                    </Card>
+                                </div>
+                            </Card>
                         </section>
 
                         {/* Footer */}

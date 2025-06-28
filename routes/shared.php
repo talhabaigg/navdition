@@ -7,7 +7,12 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    // Check if tenant/subdomain is detected
+    if ($request->getHost() !== config('app.domain', 'localhost')) {
+        return redirect()->route('login');
+    }
+
     return Inertia::render('welcome');
 })->name('home');
 

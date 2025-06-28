@@ -54,7 +54,7 @@ export default function Dashboard({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
-            {justLogged ? (
+            {justLogged && !tenant ? (
                 <div>
                     <AlertDialog open={true}>
                         <AlertDialogContent>
