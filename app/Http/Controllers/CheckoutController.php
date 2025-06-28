@@ -14,7 +14,7 @@ class CheckoutController extends Controller
         $priceId = $request->input('priceId');
 
         return $request->user()
-            ->newSubscription('prod_Sa00Dt6C9CqQDm', $priceId)
+            ->newSubscription('default', $priceId)
 
             ->checkout([
                 'success_url' => route('dashboard'),
