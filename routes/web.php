@@ -16,4 +16,4 @@ foreach (config('tenancy.central_domains') as $domain) {
 
 
 }
-Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])->name('cashier.webhook');
