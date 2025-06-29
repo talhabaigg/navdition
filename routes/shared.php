@@ -19,7 +19,7 @@ Route::get('/', function (Request $request) {
 })->name('home');
 
 //Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook'])
-    //->name('cashier.webhook');
+//->name('cashier.webhook');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         $users = User::withCount([
@@ -45,10 +45,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('projects.submit');
 
 
-
+    Route::get('/users/create', [UserController::class, 'create'])
+        ->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])
+        ->name('users.store');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/{user}', [UserController::class, 'show'])
         ->name('users.show');
+
 
 
     Route::resource('invoices', InvoiceController::class)->names('invoices');

@@ -18,7 +18,7 @@ class CheckoutController extends Controller
 
             ->checkout([
                 'success_url' => route('dashboard'),
-                'cancel_url' => route('dashboard'),
+                'cancel_url' => route('billing'),
             ]);
     }
 }

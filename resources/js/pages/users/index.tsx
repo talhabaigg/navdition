@@ -19,6 +19,10 @@ export default function UsersIndex() {
     }>().props;
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
+            <Link href={route('users.create')} className="mx-2 p-0">
+                <Button>Create User</Button>
+            </Link>
+
             <Card className="mx-2 p-0">
                 <Table>
                     <TableHeader>

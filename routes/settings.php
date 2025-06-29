@@ -20,6 +20,22 @@ Route::middleware('auth')->group(function () {
     })->name('appearance');
 
     Route::get('settings/billing', function () {
-        return Inertia::render('settings/billing');
+        $user = auth()->user();
+        $tenant = $user->tenant;
+        $owner = $tenant->owner;
+
+        $subscription = $owner->subscription('default');
+
+        // Check if the current user is subscribed (if you want to check owner instead, do $owner->subscribed)
+        $subscribed = $owner->subscribed('default');
+
+        return Inertia::render('settings/billing', compact('subscribed', 'subscription'));
     })->name('billing');
+
+    Route::get('settings/billing/{subscription}/cancel', function ($subscription) {
+        $user = auth()->user();
+        $user->subscription('default')->cancelNow();
+
+        return redirect()->route('billing')->with('success', 'Subscription cancelled successfully.');
+    })->name('billing.cancel');
 });

@@ -87,4 +87,9 @@ class User extends Authenticatable
             )->get()
         );
     }
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
 }
